@@ -2,45 +2,37 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
-public class FFA
-{
+public class FFA {
     private int[] parent;
     private Queue<Integer> queue;
     private int numberOfVertices;
     private boolean[] visited;
 
-    private FFA(int numberOfVertices)
-    {
+    private FFA(int numberOfVertices) {
         this.numberOfVertices = numberOfVertices;
         this.queue = new LinkedList<>();
         parent = new int[numberOfVertices + 1];
         visited = new boolean[numberOfVertices + 1];
     }
 
-    private boolean bfs(int source, int goal, int graph[][])
-    {
+    private boolean bfs(int source, int goal, int graph[][]) {
         boolean pathFound = false;
         int destination, element;
 
-        for(int vertex = 1; vertex <= numberOfVertices; vertex++)
-        {
+        for (int vertex = 1; vertex <= numberOfVertices; vertex++) {
             parent[vertex] = -1;
             visited[vertex] = false;
         }
-
         queue.add(source);
         parent[source] = -1;
         visited[source] = true;
 
-        while (!queue.isEmpty())
-        {
+        while (!queue.isEmpty()) {
             element = queue.remove();
             destination = 1;
 
-            while (destination <= numberOfVertices)
-            {
-                if (graph[element][destination] > 0 &&  !visited[destination])
-                {
+            while (destination <= numberOfVertices) {
+                if (graph[element][destination] > 0 && !visited[destination]) {
                     parent[destination] = element;
                     queue.add(destination);
                     visited[destination] = true;
@@ -48,35 +40,29 @@ public class FFA
                 destination++;
             }
         }
-        if(visited[goal])
-        {
+        if (visited[goal]) {
             pathFound = true;
         }
         return pathFound;
     }
 
-    private int fordFulkerson(int graph[][], int source, int destination)
-    {
+    private int fordFulkerson(int graph[][], int source, int destination) {
         int u, v;
         int maxFlow = 0;
         int pathFlow;
 
         int[][] residualGraph = new int[numberOfVertices + 1][numberOfVertices + 1];
-        for (int sourceVertex = 1; sourceVertex <= numberOfVertices; sourceVertex++)
-        {
+        for (int sourceVertex = 1; sourceVertex <= numberOfVertices; sourceVertex++) {
             System.arraycopy(graph[sourceVertex], 1, residualGraph[sourceVertex], 1, numberOfVertices);
         }
 
-        while (bfs(source ,destination, residualGraph))
-        {
+        while (bfs(source, destination, residualGraph)) {
             pathFlow = Integer.MAX_VALUE;
-            for (v = destination; v != source; v = parent[v])
-            {
+            for (v = destination; v != source; v = parent[v]) {
                 u = parent[v];
                 pathFlow = Math.min(pathFlow, residualGraph[u][v]);
             }
-            for (v = destination; v != source; v = parent[v])
-            {
+            for (v = destination; v != source; v = parent[v]) {
                 u = parent[v];
                 residualGraph[u][v] -= pathFlow;
                 residualGraph[v][u] += pathFlow;
@@ -87,8 +73,7 @@ public class FFA
         return maxFlow;
     }
 
-    public static void main(String...arg)
-    {
+    public static void main(String... arg) {
         int[][] graph;
         int numberOfNodes;
         int source;
@@ -101,16 +86,14 @@ public class FFA
         graph = new int[numberOfNodes + 1][numberOfNodes + 1];
 
         System.out.println("Enter the graph matrix");
-        for (int sourceVertex = 1; sourceVertex <= numberOfNodes; sourceVertex++)
-        {
-            for (int destinationVertex = 1; destinationVertex <= numberOfNodes; destinationVertex++)
-            {
+        for (int sourceVertex = 1; sourceVertex <= numberOfNodes; sourceVertex++) {
+            for (int destinationVertex = 1; destinationVertex <= numberOfNodes; destinationVertex++) {
                 graph[sourceVertex][destinationVertex] = scanner.nextInt();
             }
         }
 
         System.out.println("Enter the source of the graph");
-        source= scanner.nextInt();
+        source = scanner.nextInt();
 
         System.out.println("Enter the sink of the graph");
         sink = scanner.nextInt();
